@@ -1,5 +1,5 @@
 # cultusrego
-PHP Styleguide generator  
+PHP Styleguide Generator  
 https://github.com/maoberlehner/cultusrego
 
 ### Author
