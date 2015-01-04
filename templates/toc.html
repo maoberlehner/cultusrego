@@ -1,7 +1,7 @@
 <nav class="toc">
   <ul>
     {% for section in sections %}
-      <li><a href="#{{ section.level }}">{{ section.level }} {{ section.name }}</a></li>
+      {% include 'toc_list.html' %}
     {% endfor %}
   </ul>
 </nav>

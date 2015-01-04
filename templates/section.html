@@ -12,4 +12,8 @@
     </div>
   {% endif %}
   {{ section.colors }}
+
+  {% for section in section.sub %}
+    {% include 'section.html' %}
+  {% endfor %}
 </section>

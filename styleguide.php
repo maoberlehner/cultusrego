@@ -66,6 +66,7 @@ class styleguide {
   }
 
   private function find_sections() {
+    $sections = array();
     $last_section = FALSE;
     preg_match_all('#\/\*((?:(?!\*\/).)*)\*\/#s', $this->code, $matches);
 
@@ -82,18 +83,48 @@ class styleguide {
           $elements['htag'] = $this->section_htags[$level_depth];
         }
 
-        $this->sections[$elements['level']] = $elements;
+        $sections[$elements['level']] = $elements;
         $last_section = $elements['level'];
       }
       else if (!empty($elements)) {
         foreach ($elements as $element_label => $element_value) {
-          $this->sections[$last_section][$element_label] = isset($this->sections[$last_section][$element_label])
-            ? $this->sections[$last_section][$element_label] . "\n" . $element_value
+          $sections[$last_section][$element_label] = isset($sections[$last_section][$element_label])
+            ? $sections[$last_section][$element_label] . "\n" . $element_value
             : $element_value;
         }
       }
     }
-    ksort($this->sections);
+    ksort($sections);
+    $this->build_section_tree($sections);
+  }
+
+  private function build_section_tree($sections) {
+    $level_tree = array();
+
+    foreach ($sections as $level => $section) {
+      $level_depth_arr = array_filter(explode('.', $level));
+      $level_depth = count($level_depth_arr);
+      array_pop($level_depth_arr);
+      $level_parent = $level_depth > 1 ? implode('.', $level_depth_arr) . '.' : $level;
+      $level_tree[$level_depth][$level_parent][$level] = $section;
+    }
+
+    foreach ($level_tree[1] as $section_level => $section) {
+      $section[$section_level]['sub'] = $this->build_section_sub_tree($level_tree, 2, $section_level);
+      $this->sections += $section;
+    }
+  }
+
+  private function build_section_sub_tree($main_tree, $tree_level, $section_level) {
+    $sub_sections = array();
+    if (isset($main_tree[$tree_level]) && isset($main_tree[$tree_level][$section_level])) {
+      $sub_sections = $main_tree[$tree_level][$section_level];
+      $sub_tree_level = $tree_level + 1;
+      foreach ($sub_sections as $sub_section_level => $sub_section) {
+        $sub_sections[$sub_section_level]['sub'] = $this->build_section_sub_tree($main_tree, $sub_tree_level, $sub_section_level);
+      }
+    }
+    return $sub_sections;
   }
 
   private function parse_match($match) {
