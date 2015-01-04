@@ -91,7 +91,6 @@ class styleguide {
             ? $this->sections[$last_section][$element_label] . "\n" . $element_value
             : $element_value;
         }
-        //$this->sections[$last_section] = array_merge($this->sections[$last_section], $elements);
       }
     }
     ksort($this->sections);
@@ -126,5 +125,3 @@ class styleguide {
     }
   }
 }
-
-print rand(1, 1000);
