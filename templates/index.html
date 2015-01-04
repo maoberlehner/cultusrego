@@ -7,8 +7,9 @@
     <meta name="description" content="{{ description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/main.css">
+    {% for source_file in source %}
+      <link rel="stylesheet" href="{{ source_file }}">
+    {% endfor %}
   </head>
   <body>
     {% include 'header.html' %}

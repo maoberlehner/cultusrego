@@ -1,7 +1,7 @@
 <?php
 
 $styleguide = new styleguide(array(
-  'source' => array('avalanche/src/avalanche.scss'),
+  'source' => array('avalanche/dist/avalanche.css'),
 ));
 $styleguide->render();
 
@@ -19,8 +19,14 @@ class styleguide {
   );
 
   private $code = '';
-  private $file_extensions = array('css', 'less', 'scss');
   private $sections = array();
+  private $elements = array(
+    'name',
+    'level',
+    'description',
+    'markup',
+    'colors',
+  );
 
   function __construct() {
     $arguments = func_get_args();
@@ -42,105 +48,80 @@ class styleguide {
 
     $this->load_code($this->source);
     $this->find_sections();
-//print $this->code;
   }
 
   public function render() {
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
-      'cache' => $this->template_folder . '/twig_cache',
+      'cache' => /*$this->template_folder . '/twig_cache'*/FALSE,
     ));
     print $twig->render('index.html', array(
       'title' => $this->title,
       'description' => $this->description,
+      'source' => $this->source,
       'sections' => $this->sections,
     ));
   }
 
   private function find_sections() {
+    $last_section = FALSE;
     preg_match_all('#\/\*((?:(?!\*\/).)*)\*\/#s', $this->code, $matches);
 
     foreach ($matches[1] as $match) {
-      if (strpos($match, '@name') !== FALSE) {
-        $section = array();
+      $section = array();
+      $elements = $this->parse_match($match);
 
-        $section['name'] = $this->parse_match('@name', $match);
-        $section['htag'] = 'h2';
+      if (isset($elements['name']) && isset($elements['level'])) {
+        $elements['htag'] = 'h6';
 
-        if (strpos($match, '@level') !== FALSE) {
-          $section['level'] = $this->parse_match('@level', $match);
-          $level_depth_arr = array_filter(explode('.', $section['level']));
-          $level_depth = count($level_depth_arr);
-          $section['htag'] = 'h6';
-          if (isset($this->section_htags[$level_depth])) {
-            $section['htag'] = $this->section_htags[$level_depth];
-          }
+        $level_depth_arr = array_filter(explode('.', $elements['level']));
+        $level_depth = count($level_depth_arr);
+        if (isset($this->section_htags[$level_depth])) {
+          $elements['htag'] = $this->section_htags[$level_depth];
         }
 
-        if (strpos($match, '@description') !== FALSE) {
-          $section['description'] = $this->parse_match('@description', $match);
+        $this->sections[$elements['level']] = $elements;
+        $last_section = $elements['level'];
+      }
+      else if (!empty($elements)) {
+        foreach ($elements as $element_label => $element_value) {
+          $this->sections[$last_section][$element_label] = isset($this->sections[$last_section][$element_label])
+            ? $this->sections[$last_section][$element_label] . "\n" . $element_value
+            : $element_value;
         }
-
-        if (strpos($match, '@markup') !== FALSE) {
-          $section['markup'] = $this->parse_match('@markup', $match);
-        }
-
-        $this->sections[] = $section;
-
-//print_r($section);
+        //$this->sections[$last_section] = array_merge($this->sections[$last_section], $elements);
       }
     }
+    ksort($this->sections);
   }
 
-  private function parse_match($label, $match) {
+  private function parse_match($match) {
     $match = trim($match);
-    if (!preg_match("#$label (.*?)\n#", $match, $detail_match)) {
-      preg_match("#$label\n \*   (.*?)(\n \*\n|$)#s", $match, $detail_match);
-      $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
+    $element_values = array();
+    foreach ($this->elements as $element_label) {
+      if (strpos($match, '@' . $element_label) !== FALSE) {
+        if ($element_label == 'markup') {
+          $element_values['markup_language'] = 'html';
+          if (preg_match("#\@markup \[(.*?)\]\n#s", $match, $markup_language_match)) {
+            $element_values['markup_language'] = $markup_language_match[1];
+            $match = str_replace(' [' . $markup_language_match[1] . ']', '', $match);
+          }
+        }
+        if (!preg_match("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
+          preg_match("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
+          $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
+        }
+        $element_values[$element_label] = $detail_match[1];
+      }
     }
-    return $detail_match[1];
+    return $element_values;
   }
 
   private function load_code($source) {
     $source = is_array($source) ? $source : array($source);
     foreach ($source as $source_file) {
-      $rel_path = dirname($source_file);
-      $code = file_get_contents($source_file);
-      $this->code .= $this->load_imports($code, $rel_path);
+      $this->code .= file_get_contents($source_file);
     }
-  }
-
-  private function load_imports($code, $rel_path = '') {
-    preg_match_all('#@import (.*?);#i', $code, $matches);
-    $imports = str_replace(array(' ', '\'', '"'), '', $matches[1]);
-    foreach ($imports as $k => $import_path) {
-      $full_import_path = $this->get_full_import_path($import_path, $rel_path);
-      $import_code = $this->load_code($full_import_path);
-      $code = str_replace($matches[0][$k], $import_code, $code);
-    }
-    return $code;
-  }
-
-  private function get_full_import_path($import_path, $rel_path = '') {
-    if (is_file($rel_path . '/' . $import_path)) {
-      return $rel_path . '/' . $import_path;
-    }
-
-    $import_dirname = dirname($import_path);
-    $import_basename = basename($import_path);
-    foreach ($this->file_extensions as $file_extension) {
-      $import_path_extended = $rel_path . '/' . $import_dirname . '/' . $import_basename . '.' . $file_extension;
-      if (is_file($import_path_extended)) {
-        return $import_path_extended;
-      }
-
-      $import_path_extended_scss = $rel_path . '/' . $import_dirname . '/_' . $import_basename . '.' . $file_extension;
-      if (is_file($import_path_extended_scss)) {
-        return $import_path_extended_scss;
-      }
-    }
-
-    return FALSE;
   }
 }
 

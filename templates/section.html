@@ -1,4 +1,13 @@
 <section id="{{ section.level }}" class="section section--level-{{ section.level }}">
   <{{ section.htag }}><a href="#{{ section.level }}">{{ section.name }}</a></{{ section.htag }}>
-  {{ section.content }}
+  {{ section.description }}
+  <div class="markup">
+    <div class="markup__rendered">
+      {{ section.markup|raw }}
+    </div>
+    <div class="markup__code">
+      <pre><code class="language-{{ section.markup_language }}">{{ section.markup }}</code></pre>
+    </div>
+  </div>
+  {{ section.colors }}
 </section>
