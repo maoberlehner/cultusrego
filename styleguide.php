@@ -2,6 +2,7 @@
 
 $styleguide = new styleguide(array(
   'source' => array('avalanche/dist/avalanche.css'),
+  'twig_cache' => FALSE,
 ));
 $styleguide->render();
 
@@ -10,6 +11,7 @@ class styleguide {
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
   public $template_folder = 'templates';
+  public $twig_cache = 'templates/twig_cache';
   public $section_htags = array(
     1 => 'h2',
     2 => 'h3',
@@ -53,7 +55,7 @@ class styleguide {
   public function render() {
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
-      'cache' => /*$this->template_folder . '/twig_cache'*/FALSE,
+      'cache' => $this->twig_cache,
     ));
     print $twig->render('index.html', array(
       'title' => $this->title,
