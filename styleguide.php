@@ -102,7 +102,7 @@ class styleguide {
     foreach ($this->elements as $element_label) {
       if (strpos($match, '@' . $element_label) !== FALSE) {
         if ($element_label == 'markup') {
-          $element_values['markup_language'] = 'html';
+          $element_values['markup_language'] = 'markup';
           if (preg_match("#\@markup \[(.*?)\]\n#s", $match, $markup_language_match)) {
             $element_values['markup_language'] = $markup_language_match[1];
             $match = str_replace(' [' . $markup_language_match[1] . ']', '', $match);

@@ -7,6 +7,7 @@
     <meta name="description" content="{{ description }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" href="assets/vendor/prism/prism.css">
     {% for source_file in source %}
       <link rel="stylesheet" href="{{ source_file }}">
     {% endfor %}
@@ -19,5 +20,7 @@
       {% include 'section.html' %}
     {% endfor %}
     {% include 'footer.html' %}
+
+    <script src="assets/vendor/prism/prism.js"></script>
   </body>
 </html>
