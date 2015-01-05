@@ -1,6 +1,8 @@
 <section id="{{ section.level }}" class="section section--level-{{ section.level }}">
   <{{ section.htag }}><a href="#{{ section.level }}">{{ section.name }}</a></{{ section.htag }}>
+
   {{ section.description }}
+
   {% if section.markup %}
     <div class="markup">
       <div class="markup__rendered">
@@ -11,8 +13,15 @@
       </div>
     </div>
   {% endif %}
+
   {{ section.colors }}
-  {{ section.variables }}
+
+  {% if section.variables %}
+    <div class="variables">
+      {{ section.variables|raw }}
+    </div>
+  {% endif %}
+
   {% for section in section.sub %}
     {% include 'section.html' %}
   {% endfor %}

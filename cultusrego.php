@@ -1,5 +1,22 @@
 <?php
 
+if (is_file('vendor/autoload.php')) {
+  require 'vendor/autoload.php';
+}
+
+if (!class_exists('Twig_Loader_Filesystem')) {
+  die('Twig not loaded');
+}
+
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
+
+/*if (is_file(__DIR__ . '/vendor/michelf/php-markdown/Michelf/MarkdownExtra.inc.php')) {
+  require_once 'vendor/michelf/php-markdown/Michelf/MarkdownExtra.inc.php';
+}*/
+
+//use \Michelf\MarkdownExtra;
+
 class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
@@ -39,24 +56,20 @@ class cultusrego {
       }
     }
 
-    if (is_file('vendor/autoload.php')) {
-      require 'vendor/autoload.php';
-    }
-
-    if (!class_exists('Twig_Loader_Filesystem')) {
-      die('Twig not loaded');
-    }
-
     $this->source = is_array($this->source) ? $this->source : array($this->source);
     $this->load_code($this->source);
     $this->find_sections();
   }
 
   public function render() {
+    $engine = new MarkdownEngine\MichelfMarkdownEngine();
+
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
       'cache' => $this->twig_cache,
     ));
+    $twig->addExtension(new MarkdownExtension($engine));
+
     print $twig->render('index.html', array(
       'title' => $this->title,
       'description' => $this->description,
