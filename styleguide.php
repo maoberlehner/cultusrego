@@ -1,11 +1,5 @@
 <?php
 
-$styleguide = new styleguide(array(
-  'source' => array('avalanche/dist/avalanche.css'),
-  'twig_cache' => FALSE,
-));
-$styleguide->render();
-
 class styleguide {
   public $source;
   public $title = 'cultusrego Styleguide';
