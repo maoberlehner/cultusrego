@@ -1,6 +1,6 @@
 <?php
 
-class styleguide {
+class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
