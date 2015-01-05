@@ -1,6 +1,6 @@
 # cultusrego
 PHP Styleguide Generator  
-https://github.com/maoberlehner/cultusrego
+http://cultusrego.oberlehner.net
 
 ### Author
 Markus Oberlehner  
