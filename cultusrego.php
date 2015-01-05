@@ -11,12 +11,6 @@ if (!class_exists('Twig_Loader_Filesystem')) {
 use Aptoma\Twig\Extension\MarkdownExtension;
 use Aptoma\Twig\Extension\MarkdownEngine;
 
-/*if (is_file(__DIR__ . '/vendor/michelf/php-markdown/Michelf/MarkdownExtra.inc.php')) {
-  require_once 'vendor/michelf/php-markdown/Michelf/MarkdownExtra.inc.php';
-}*/
-
-//use \Michelf\MarkdownExtra;
-
 class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
@@ -63,7 +57,6 @@ class cultusrego {
 
   public function render() {
     $engine = new MarkdownEngine\MichelfMarkdownEngine();
-
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
       'cache' => $this->twig_cache,
@@ -165,7 +158,7 @@ class cultusrego {
           break;
 
         default:
-          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          $element_values[$element_label] = str_replace("\n", '<br />', $this->parse_element_value($element_label, $match));
           break;
       }
     }

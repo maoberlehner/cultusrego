@@ -1,7 +1,7 @@
 <section id="{{ section.level }}" class="section section--level-{{ section.level }}">
   <{{ section.htag }}><a href="#{{ section.level }}">{{ section.name }}</a></{{ section.htag }}>
 
-  {{ section.description }}
+  {{ section.description|markdown }}
 
   {% if section.markup %}
     <div class="markup">
@@ -18,7 +18,7 @@
 
   {% if section.variables %}
     <div class="variables">
-      {{ section.variables|raw }}
+      {{ section.variables|markdown }}
     </div>
   {% endif %}
 
