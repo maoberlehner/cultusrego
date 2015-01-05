@@ -23,6 +23,7 @@ class cultusrego {
     'description',
     'markup',
     'colors',
+    'variables',
   );
 
   function __construct() {
@@ -131,22 +132,39 @@ class cultusrego {
     $match = trim($match);
     $element_values = array();
     foreach ($this->elements as $element_label) {
-      if (strpos($match, '@' . $element_label) !== FALSE) {
-        if ($element_label == 'markup') {
+      if (strpos($match, '@' . $element_label) === FALSE) { continue; }
+
+      switch ($element_label) {
+        case 'markup':
           $element_values['markup_language'] = 'markup';
           if (preg_match("#\@markup \[(.*?)\]\n#s", $match, $markup_language_match)) {
             $element_values['markup_language'] = $markup_language_match[1];
             $match = str_replace(' [' . $markup_language_match[1] . ']', '', $match);
           }
-        }
-        if (!preg_match("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
-          preg_match("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
-          $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
-        }
-        $element_values[$element_label] = $detail_match[1];
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          break;
+
+        case 'variables':
+          $variables = $this->parse_element_value($element_label, $match);
+          $variables = explode(' ', $variables);
+          $variables = str_replace('|', ': ', $variables);
+          $element_values[$element_label] = '- ' . implode(";\n- ", $variables) . ';';
+          break;
+
+        default:
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          break;
       }
     }
     return $element_values;
+  }
+
+  private function parse_element_value($element_label, $match) {
+    if (!preg_match("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
+      preg_match("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
+      $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
+    }
+    return $detail_match[1];
   }
 
   private function load_code($source) {
