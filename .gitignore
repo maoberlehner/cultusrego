@@ -1,6 +1,5 @@
 .DS_Store
 .sass-cache
 /vendor
-composer.lock
 avalanche
 templates/twig_cache
