@@ -4,8 +4,9 @@ class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
-  public $template_folder = 'templates';
-  public $twig_cache = 'templates/twig_cache';
+  public $template_folder = __DIR__ . '/templates';
+  public $twig_cache;
+  public $base_path;
   public $section_htags = array(
     1 => 'h2',
     2 => 'h3',
@@ -25,6 +26,9 @@ class cultusrego {
   );
 
   function __construct() {
+    $this->twig_cache = $this->template_folder . '/twig_cache';
+    $this->base_path = substr(str_replace('\\', '/', realpath(dirname(__FILE__))), strlen(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])))) . '/';
+
     $arguments = func_get_args();
     if (!empty($arguments)) {
       foreach ($arguments[0] as $key => $property) {
@@ -42,6 +46,7 @@ class cultusrego {
       die('Twig not loaded');
     }
 
+    $this->source = is_array($this->source) ? $this->source : array($this->source);
     $this->load_code($this->source);
     $this->find_sections();
   }
@@ -56,6 +61,7 @@ class cultusrego {
       'description' => $this->description,
       'source' => $this->source,
       'sections' => $this->sections,
+      'base_path' => $this->base_path,
     ));
   }
 
@@ -144,7 +150,6 @@ class cultusrego {
   }
 
   private function load_code($source) {
-    $source = is_array($source) ? $source : array($source);
     foreach ($source as $source_file) {
       $this->code .= file_get_contents($source_file);
     }
