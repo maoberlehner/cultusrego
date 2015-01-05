@@ -1,10 +1,10 @@
 # cultusrego
-PHP Styleguide generator
-https://github.com/maoberlehner/cultusrego
+PHP Styleguide Generator  
+http://cultusrego.oberlehner.net
 
 ### Author
-Markus Oberlehner
-Twitter: https://twitter.com/MaOberlehner
+Markus Oberlehner  
+Twitter: https://twitter.com/MaOberlehner  
 Work: Web Developer @ roromedia - http://www.roromedia.com
 
 ### License
