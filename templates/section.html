@@ -13,7 +13,23 @@
     </div>
   {% endif %}
 
-  {{ section.colors }}
+  {% if section.colors %}
+    <div class="colors">
+      {% for colorset in section.colors %}
+        <ul class="colors__set">
+          {% for color in colorset %}
+            <li>
+              <div style="background:{{ color.value }};width:100px;height:100px;border:1px solid grey;"></div>
+              {% if color.name %}
+                <h5>{{ color.name }}</h5>
+              {% endif %}
+              <h6>{{ color.value }}</h6>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </div>
+  {% endif %}
 
   {% if section.variables %}
     <div class="variables">

@@ -142,6 +142,30 @@ class cultusrego {
           $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
 
+        case 'colors':
+          $colorsets = array();
+          $value = $this->parse_element_value($element_label, $match);
+          $colorset_elements = explode("\n", $value);
+          foreach ($colorset_elements as $colorset) {
+            $color_elements = explode(' ', $colorset);
+            $colors = array();
+            foreach ($color_elements as $color) {
+              $color_arr = explode('|', $color);
+              if (count($color_arr) > 1) {
+                $colors[] = array(
+                  'name' => $color_arr[0],
+                  'value' => $color_arr[1],
+                );
+              }
+              else {
+                $colors[] = array('value' => $color_arr[0]);
+              }
+            }
+            $colorsets[] = $colors;
+          }
+          $element_values[$element_label] = $colorsets;
+          break;
+
         case 'variables':
           $variables = $this->parse_element_value($element_label, $match);
           $variables = explode(' ', $variables);
