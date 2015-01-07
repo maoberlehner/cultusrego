@@ -1,6 +1,5 @@
 <section id="{{ section.level }}" class="section section--level-{{ section.level }}">
-  <{{ section.htag }}><a href="#{{ section.level }}">{{ section.name }}</a></{{ section.htag }}>
-
+  <{{ section.htag }}><a href="#{{ section.level }}" class="section__anchor">#</a>{{ section.name }}</{{ section.htag }}>
   {{ section.description|markdown }}
 
   {% if section.markup %}
