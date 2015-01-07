@@ -150,7 +150,7 @@ class cultusrego {
           break;
 
         default:
-          $element_values[$element_label] = str_replace("\n", '<br />', $this->parse_element_value($element_label, $match));
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
       }
     }
@@ -158,11 +158,11 @@ class cultusrego {
   }
 
   private function parse_element_value($element_label, $match) {
-    if (!preg_match("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
-      preg_match("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
+    if (!preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
+      preg_match_all("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
       $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
     }
-    return $detail_match[1];
+    return implode("\n\n", $detail_match[1]);
   }
 
   private function load_code($source) {
