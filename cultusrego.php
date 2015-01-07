@@ -1,13 +1,5 @@
 <?php
 
-if (is_file('vendor/autoload.php')) {
-  require 'vendor/autoload.php';
-}
-
-if (!class_exists('Twig_Loader_Filesystem')) {
-  die('Twig not loaded');
-}
-
 use Aptoma\Twig\Extension\MarkdownExtension;
 use Aptoma\Twig\Extension\MarkdownEngine;
 
