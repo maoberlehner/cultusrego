@@ -37,6 +37,14 @@
     </div>
   {% endif %}
 
+  {% if section.font %}
+    <div class="font">
+      <div style="font-family:{{ section.font_family }};">
+        {{ section.font|markdown }}
+      </div>
+    </div>
+  {% endif %}
+
   {% for section in section.sub %}
     {% include 'section.html' %}
   {% endfor %}

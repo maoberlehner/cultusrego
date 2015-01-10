@@ -27,6 +27,7 @@ class cultusrego {
     'markup',
     'colors',
     'variables',
+    'font',
   );
 
   function __construct() {
@@ -171,6 +172,15 @@ class cultusrego {
           $variables = explode(' ', $variables);
           $variables = str_replace('|', ': ', $variables);
           $element_values[$element_label] = '- ' . implode(";\n- ", $variables) . ';';
+          break;
+
+        case 'font':
+          $element_values['font_family'] = '';
+          if (preg_match("#\@font \[(.*?)\]\n#s", $match, $font_family_match)) {
+            $element_values['font_family'] = $font_family_match[1];
+            $match = str_replace(' [' . $font_family_match[1] . ']', '', $match);
+          }
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
 
         default:
