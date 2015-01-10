@@ -1,11 +1,15 @@
 <?php
 
+use Aptoma\Twig\Extension\MarkdownExtension;
+use Aptoma\Twig\Extension\MarkdownEngine;
+
 class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
-  public $template_folder = 'templates';
-  public $twig_cache = 'templates/twig_cache';
+  public $template_folder = __DIR__ . '/templates';
+  public $twig_cache;
+  public $base_path;
   public $section_htags = array(
     1 => 'h2',
     2 => 'h3',
@@ -22,9 +26,14 @@ class cultusrego {
     'description',
     'markup',
     'colors',
+    'variables',
+    'font',
   );
 
   function __construct() {
+    $this->twig_cache = $this->template_folder . '/twig_cache';
+    $this->base_path = substr(str_replace('\\', '/', realpath(dirname(__FILE__))), strlen(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])))) . '/';
+
     $arguments = func_get_args();
     if (!empty($arguments)) {
       foreach ($arguments[0] as $key => $property) {
@@ -34,28 +43,25 @@ class cultusrego {
       }
     }
 
-    if (is_file('vendor/autoload.php')) {
-      require 'vendor/autoload.php';
-    }
-
-    if (!class_exists('Twig_Loader_Filesystem')) {
-      die('Twig not loaded');
-    }
-
+    $this->source = is_array($this->source) ? $this->source : array($this->source);
     $this->load_code($this->source);
     $this->find_sections();
   }
 
   public function render() {
+    $engine = new MarkdownEngine\MichelfMarkdownEngine();
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
       'cache' => $this->twig_cache,
     ));
+    $twig->addExtension(new MarkdownExtension($engine));
+
     print $twig->render('index.html', array(
       'title' => $this->title,
       'description' => $this->description,
       'source' => $this->source,
       'sections' => $this->sections,
+      'base_path' => $this->base_path,
     ));
   }
 
@@ -125,26 +131,75 @@ class cultusrego {
     $match = trim($match);
     $element_values = array();
     foreach ($this->elements as $element_label) {
-      if (strpos($match, '@' . $element_label) !== FALSE) {
-        if ($element_label == 'markup') {
+      if (strpos($match, '@' . $element_label) === FALSE) { continue; }
+
+      switch ($element_label) {
+        case 'markup':
           $element_values['markup_language'] = 'markup';
           if (preg_match("#\@markup \[(.*?)\]\n#s", $match, $markup_language_match)) {
             $element_values['markup_language'] = $markup_language_match[1];
             $match = str_replace(' [' . $markup_language_match[1] . ']', '', $match);
           }
-        }
-        if (!preg_match("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
-          preg_match("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
-          $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
-        }
-        $element_values[$element_label] = $detail_match[1];
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          break;
+
+        case 'colors':
+          $colorsets = array();
+          $value = $this->parse_element_value($element_label, $match);
+          $colorset_elements = explode("\n", $value);
+          foreach ($colorset_elements as $colorset) {
+            $color_elements = explode(' ', $colorset);
+            $colors = array();
+            foreach ($color_elements as $color) {
+              $color_arr = explode('|', $color);
+              if (count($color_arr) > 1) {
+                $colors[] = array(
+                  'name' => $color_arr[0],
+                  'value' => $color_arr[1],
+                );
+              }
+              else {
+                $colors[] = array('value' => $color_arr[0]);
+              }
+            }
+            $colorsets[] = $colors;
+          }
+          $element_values[$element_label] = $colorsets;
+          break;
+
+        case 'variables':
+          $variables = $this->parse_element_value($element_label, $match);
+          $variables = explode(' ', $variables);
+          $variables = str_replace('|', ': ', $variables);
+          $element_values[$element_label] = '- ' . implode(";\n- ", $variables) . ';';
+          break;
+
+        case 'font':
+          $element_values['font_family'] = '';
+          if (preg_match("#\@font \[(.*?)\]\n#s", $match, $font_family_match)) {
+            $element_values['font_family'] = $font_family_match[1];
+            $match = str_replace(' [' . $font_family_match[1] . ']', '', $match);
+          }
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          break;
+
+        default:
+          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          break;
       }
     }
     return $element_values;
   }
 
+  private function parse_element_value($element_label, $match) {
+    if (!preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
+      preg_match_all("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
+      $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
+    }
+    return implode("\n\n", $detail_match[1]);
+  }
+
   private function load_code($source) {
-    $source = is_array($source) ? $source : array($source);
     foreach ($source as $source_file) {
       $this->code .= file_get_contents($source_file);
     }
