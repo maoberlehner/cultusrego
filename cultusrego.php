@@ -194,7 +194,7 @@ class cultusrego {
   private function parse_element_value($element_label, $match) {
     if (!preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
       preg_match_all("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
-      $detail_match[1] = str_replace(' *   ', '', $detail_match[1]);
+      $detail_match[1] = preg_replace('#( *)\*   #', '', $detail_match[1]);
     }
     return implode("\n\n", $detail_match[1]);
   }
