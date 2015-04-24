@@ -67,6 +67,7 @@ class cultusrego {
 
   private function find_sections() {
     $sections = array();
+    $level_memory = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     $last_section = FALSE;
     preg_match_all('#\/\*((?:(?!\*\/).)*)\*\/#s', $this->code, $matches);
 
@@ -82,6 +83,26 @@ class cultusrego {
         if (isset($this->section_htags[$level_depth])) {
           $elements['htag'] = $this->section_htags[$level_depth];
         }
+
+        // Reset the level memory to the depth of sub levels
+        $level_memory = array_slice($level_memory, 0, $level_depth);
+        $level_memory = array_pad($level_memory, 10, 0);
+
+        // Set / unset and count up the levels
+        foreach ($level_depth_arr as $key => $level) {
+          if (is_numeric($level)) {
+            $level_memory[$key] = $level;
+          }
+          else {
+            // Only count up the last level
+            if ($key > 0 && $key + 1 == $level_depth) {
+              $level_memory[$key]++;
+            }
+            // Set the level depth
+            $level_depth_arr[$key] = $level_memory[$key];
+          }
+        }
+        $elements['level'] = implode('.', $level_depth_arr) . '.';
 
         $sections[$elements['level']] = $elements;
         $last_section = $elements['level'];
