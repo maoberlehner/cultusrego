@@ -2,13 +2,13 @@
   <{{ section.htag }}><a href="#{{ section.level }}" class="section__anchor">#</a>{{ section.name }}</{{ section.htag }}>
   {{ section.description|markdown }}
 
-  {% if section.markup %}
-    <div class="markup">
-      <div class="markup__rendered">
-        {{ section.markup|raw }}
+  {% if section.code %}
+    <div class="code">
+      <div class="code__rendered">
+        {{ section.code|raw }}
       </div>
-      <div class="markup__code">
-        <pre class="language-{{ section.markup_language }}"><code class="language-{{ section.markup_language }}">{{ section.markup }}</code></pre>
+      <div class="code__code">
+        <pre class="language-{{ section.code_language }}"><code class="language-{{ section.code_language }}">{{ section.code }}</code></pre>
       </div>
     </div>
   {% endif %}

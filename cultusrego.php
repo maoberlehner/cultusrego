@@ -24,7 +24,7 @@ class cultusrego {
     'name',
     'level',
     'description',
-    'markup',
+    'code',
     'colors',
     'variables',
     'font',
@@ -155,11 +155,11 @@ class cultusrego {
       if (strpos($match, '@' . $element_label) === FALSE) { continue; }
 
       switch ($element_label) {
-        case 'markup':
-          $element_values['markup_language'] = 'markup';
-          if (preg_match("#\@markup \[(.*?)\]\n#s", $match, $markup_language_match)) {
-            $element_values['markup_language'] = $markup_language_match[1];
-            $match = str_replace(' [' . $markup_language_match[1] . ']', '', $match);
+        case 'code':
+          $element_values['code_language'] = 'markup';
+          if (preg_match("#\@code \[(.*?)\]\n#s", $match, $code_language_match)) {
+            $element_values['code_language'] = $code_language_match[1];
+            $match = str_replace(' [' . $code_language_match[1] . ']', '', $match);
           }
           $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
