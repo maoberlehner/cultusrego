@@ -7,7 +7,7 @@ class cultusrego {
   public $source;
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
-  public $template_folder = __DIR__ . '/templates';
+  public $template_folder = __DIR__ . '/template';
   public $twig_cache;
   public $base_path;
   public $section_htags = array(
