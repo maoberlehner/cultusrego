@@ -25,8 +25,8 @@ class cultusrego {
     'level',
     'description',
     'code',
-    'colors',
-    'variables',
+    'color',
+    'variable',
     'font',
   );
 
@@ -164,7 +164,7 @@ class cultusrego {
           $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
 
-        case 'colors':
+        case 'color':
           $colorsets = array();
           $value = $this->parse_element_value($element_label, $match);
           $colorset_elements = explode("\n", $value);
@@ -188,7 +188,7 @@ class cultusrego {
           $element_values[$element_label] = $colorsets;
           break;
 
-        case 'variables':
+        case 'variable':
           $variables = $this->parse_element_value($element_label, $match);
           $variables = explode(' ', $variables);
           $variables = str_replace('|', ': ', $variables);
