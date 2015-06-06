@@ -13,10 +13,10 @@
     </div>
   {% endif %}
 
-  {% if section.colors %}
-    <div class="colors">
-      {% for colorset in section.colors %}
-        <ul class="colors__set">
+  {% if section.color %}
+    <div class="color">
+      {% for colorset in section.color %}
+        <ul class="color__set">
           {% for color in colorset %}
             <li>
               <div style="background:{{ color.value }};width:100px;height:100px;border:1px solid grey;"></div>
@@ -31,9 +31,9 @@
     </div>
   {% endif %}
 
-  {% if section.variables %}
-    <div class="variables">
-      {{ section.variables|markdown }}
+  {% if section.variable %}
+    <div class="variable">
+      {{ section.variable|markdown }}
     </div>
   {% endif %}
 
