@@ -32,8 +32,11 @@ class cultusrego {
 
   function __construct() {
     $this->twig_cache = $this->template_folder . '/twig_cache';
+    // The base path is used for loading frontend assets
     $this->base_path = substr(str_replace('\\', '/', realpath(dirname(__FILE__))), strlen(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])))) . '/';
 
+    // Override the default variables with the values
+    // that are provided when the class is initialized
     $arguments = func_get_args();
     if (!empty($arguments)) {
       foreach ($arguments[0] as $key => $property) {
@@ -43,12 +46,19 @@ class cultusrego {
       }
     }
 
+    // Make an array out of $this->source if a string is provided
     $this->source = is_array($this->source) ? $this->source : array($this->source);
+    
     $this->load_code($this->source);
     $this->find_sections();
   }
 
+  /**
+   * Loads Markdown and Twig engines and renders the styleguide
+   * @return rendered HTML
+   */
   public function render() {
+    // Initialize Markdown and Twig
     $engine = new MarkdownEngine\MichelfMarkdownEngine();
     $twig_loader = new Twig_Loader_Filesystem($this->template_folder);
     $twig = new Twig_Environment($twig_loader, array(
@@ -65,10 +75,15 @@ class cultusrego {
     ));
   }
 
+  /**
+   * Parse the provided code for valid styleguide sections
+   */
   private function find_sections() {
     $sections = array();
     $level_memory = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     $last_section = FALSE;
+
+    // Match multiline comments
     preg_match_all('#\/\*((?:(?!\*\/).)*)\*\/#s', $this->code, $matches);
 
     foreach ($matches[1] as $match) {
@@ -76,8 +91,10 @@ class cultusrego {
       $elements = $this->parse_match($match);
 
       if (isset($elements['name']) && isset($elements['level'])) {
+        // Default htag to the lowest level htag
         $elements['htag'] = 'h6';
 
+        // Find the depth of the level value
         $level_depth_arr = array_filter(explode('.', $elements['level']));
         $level_depth = count($level_depth_arr);
         if (isset($this->section_htags[$level_depth])) {
@@ -107,6 +124,8 @@ class cultusrego {
         $sections[$elements['level']] = $elements;
         $last_section = $elements['level'];
       }
+      // If no name or level is provided scan for other styleguide elements
+      // and append them to the previous section
       else if (!empty($elements)) {
         foreach ($elements as $element_label => $element_value) {
           $sections[$last_section][$element_label] = isset($sections[$last_section][$element_label])
@@ -115,27 +134,49 @@ class cultusrego {
         }
       }
     }
+
     ksort($sections);
     $this->build_section_tree($sections);
   }
 
+  /**
+   * Build a nested array according to the section levels
+   * @param  array $sections
+   */
   private function build_section_tree($sections) {
     $level_tree = array();
 
     foreach ($sections as $level => $section) {
+      // array_filter removes the last, empty value
+      // from the level array that is created by the explode function
       $level_depth_arr = array_filter(explode('.', $level));
+
       $level_depth = count($level_depth_arr);
+
+      // Get the parent level
       array_pop($level_depth_arr);
       $level_parent = $level_depth > 1 ? implode('.', $level_depth_arr) . '.' : $level;
+
+      // Add the current section to the level tree
       $level_tree[$level_depth][$level_parent][$level] = $section;
     }
 
+    // Run over all main sections in $level_tree[1]
     foreach ($level_tree[1] as $section_level => $section) {
+      // Add corresponding sub levels to the main level
       $section[$section_level]['sub'] = $this->build_section_sub_tree($level_tree, 2, $section_level);
+
       $this->sections += $section;
     }
   }
 
+  /**
+   * Build an array of sub sections for the given section
+   * @param  array   $main_tree
+   * @param  integer $tree_level
+   * @param  string  $section_level
+   * @return array                  Sub sections for the given section
+   */
   private function build_section_sub_tree($main_tree, $tree_level, $section_level) {
     $sub_sections = array();
     if (isset($main_tree[$tree_level]) && isset($main_tree[$tree_level][$section_level])) {
@@ -148,19 +189,29 @@ class cultusrego {
     return $sub_sections;
   }
 
+  /**
+   * Find styleguide elements and their values in a comment section
+   * @param  string $match The contents of a matched comment section
+   * @return array         Values of the found styleguide elements
+   */
   private function parse_match($match) {
     $match = trim($match);
     $element_values = array();
+
     foreach ($this->elements as $element_label) {
+      // If no styleguide element placeholders are found skip parsing the section
       if (strpos($match, '@' . $element_label) === FALSE) { continue; }
 
       switch ($element_label) {
         case 'code':
+          // Default code language is markup
           $element_values['code_language'] = 'markup';
+          // Look if a other code language is defined
           if (preg_match("#\@code \[(.*?)\]\n#s", $match, $code_language_match)) {
             $element_values['code_language'] = $code_language_match[1];
             $match = str_replace(' [' . $code_language_match[1] . ']', '', $match);
           }
+          
           $element_values[$element_label] = $this->parse_element_value($element_label, $match);
           break;
 
