@@ -264,11 +264,17 @@ class cultusrego {
   }
 
   private function parse_element_value($element_label, $match) {
-    if (!preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
-      preg_match_all("#\@$element_label\n +\*   (.*?)(\n +\*\n|$)#s", $match, $detail_match);
-      $detail_match[1] = preg_replace('#( *)\*   #', '', $detail_match[1]);
+    // Single line value inline with the label
+    // (e.g. @label value)
+    if (preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
+      $element_value = implode("\n\n", $detail_match[1]);
+      return $element_value;
     }
-    return implode("\n\n", $detail_match[1]);
+
+    // Multi line value
+    preg_match_all("#\@$element_label\n( +)(\*   )?(.*?)(\n +\*\n|$)#s", $match, $detail_match);
+    $element_value = implode("\n\n", preg_replace('#^' . $detail_match[1][0] . '(\*   )?#m', '', $detail_match[3]));
+    return $element_value;
   }
 
   private function load_code($source) {
