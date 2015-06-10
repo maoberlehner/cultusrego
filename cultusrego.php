@@ -242,7 +242,12 @@ class cultusrego {
 
         case 'variable':
           $variables = $this->parse_element_value($element_label, $match);
-          $variables = explode(' ', $variables);
+          $variables = str_replace(
+            array('" ', '\' '),
+            array('"#cultusregovariableDIVIDER#', '\'#cultusregovariableDIVIDER#'),
+            $variables
+          );
+          $variables = explode('#cultusregovariableDIVIDER#', $variables);
           $variables = str_replace('|', ': ', $variables);
           $element_values['variable'] = '- ' . implode(";\n- ", $variables) . ';';
           break;
