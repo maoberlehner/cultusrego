@@ -25,6 +25,7 @@ class cultusrego {
     'level',
     'description',
     'code',
+    'markup',
     'color',
     'variable',
     'font',
@@ -204,6 +205,7 @@ class cultusrego {
 
       switch ($element_label) {
         case 'code':
+        case 'markup':
           // Default code language is markup
           $element_values['code_language'] = 'markup';
           // Look if a other code language is defined
@@ -211,8 +213,7 @@ class cultusrego {
             $element_values['code_language'] = $code_language_match[1];
             $match = str_replace(' [' . $code_language_match[1] . ']', '', $match);
           }
-          
-          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          $element_values['code'] = $this->parse_element_value($element_label, $match);
           break;
 
         case 'color':
@@ -236,14 +237,14 @@ class cultusrego {
             }
             $colorsets[] = $colors;
           }
-          $element_values[$element_label] = $colorsets;
+          $element_values['color'] = $colorsets;
           break;
 
         case 'variable':
           $variables = $this->parse_element_value($element_label, $match);
           $variables = explode(' ', $variables);
           $variables = str_replace('|', ': ', $variables);
-          $element_values[$element_label] = '- ' . implode(";\n- ", $variables) . ';';
+          $element_values['variable'] = '- ' . implode(";\n- ", $variables) . ';';
           break;
 
         case 'font':
@@ -252,7 +253,7 @@ class cultusrego {
             $element_values['font_family'] = $font_family_match[1];
             $match = str_replace(' [' . $font_family_match[1] . ']', '', $match);
           }
-          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          $element_values['font'] = $this->parse_element_value($element_label, $match);
           break;
 
         default:
