@@ -1,7 +1,7 @@
-<li>
-  <a href="#{{ section.level }}">{{ section.level }} {{ section.name }}</a>
+<li class="c-toc__item">
+  <a class="c-toc__link" href="#{{ section.level }}">{{ section.level }} {{ section.name }}</a>
   {% if section.sub %}
-    <ul>
+    <ul class="c-toc__list c-toc__list--sub">
       {% for section in section.sub %}
         {% include 'toc_list.html' %}
       {% endfor %}

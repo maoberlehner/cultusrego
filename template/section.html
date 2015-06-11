@@ -1,31 +1,31 @@
-<section id="{{ section.level }}" class="section section--level-{{ section.level }}">
-  <{{ section.htag }}><a href="#{{ section.level }}" class="section__anchor">#</a>{{ section.name }}</{{ section.htag }}>
+<section id="{{ section.level }}" class="c-section">
+  <{{ section.htag }}><a href="#{{ section.level }}" class="c-section__anchor">#</a>{{ section.name }}</{{ section.htag }}>
   {{ section.description|markdown }}
 
   {% if section.code %}
-    <div class="code">
+    <div class="c-block c-block--code">
       {% if section.code_render %}
-        <div class="code__rendered">
+        <div class="c-block--code__rendered">
           {{ section.code|raw }}
         </div>
       {% endif %}
-      <div class="code__code">
+      <div class="c-block--code__code">
         <pre class="language-{{ section.code_language }}"><code class="language-{{ section.code_language }}">{{ section.code }}</code></pre>
       </div>
     </div>
   {% endif %}
 
   {% if section.color %}
-    <div class="color">
+    <div class="c-block c-block--color">
       {% for colorset in section.color %}
-        <ul class="color__set">
+        <ul class="c-block--color__set">
           {% for color in colorset %}
-            <li>
-              <div style="background:{{ color.value }};width:100px;height:100px;border:1px solid grey;"></div>
+            <li class="c-block--color__color">
+              <div class="c-block--color__preview" style="background:{{ color.value }};width:100px;height:100px;border:1px solid grey;"></div>
               {% if color.name %}
-                <h5>{{ color.name }}</h5>
+                <h5 class="c-block--color__name">{{ color.name }}</h5>
               {% endif %}
-              <h6>{{ color.value }}</h6>
+              <h6 class="c-block--color__value">{{ color.value }}</h6>
             </li>
           {% endfor %}
         </ul>
@@ -34,14 +34,14 @@
   {% endif %}
 
   {% if section.variable %}
-    <div class="variable">
+    <div class="c-block c-block--variable">
       {{ section.variable|markdown }}
     </div>
   {% endif %}
 
   {% if section.font %}
-    <div class="font">
-      <div style="font-family:{{ section.font_family }};">
+    <div class="c-block c-block--font">
+      <div class="c-block--font c-block--font__preview" style="font-family:{{ section.font_family }};">
         {{ section.font|markdown }}
       </div>
     </div>
