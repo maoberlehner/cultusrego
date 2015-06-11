@@ -208,6 +208,12 @@ class cultusrego {
         case 'markup':
           // Default code language is markup
           $element_values['code_language'] = 'markup';
+          // Hide rendered output by default
+          $element_values['code_render'] = FALSE;
+          // If element label is markup render by default
+          if ($element_label == 'markup') {
+            $element_values['code_render'] = TRUE;
+          }
           // Look if a other code language is defined
           if (preg_match("#\@code \[(.*?)\]\n#s", $match, $code_language_match)) {
             $element_values['code_language'] = $code_language_match[1];

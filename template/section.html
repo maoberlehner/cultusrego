@@ -4,9 +4,11 @@
 
   {% if section.code %}
     <div class="code">
-      <div class="code__rendered">
-        {{ section.code|raw }}
-      </div>
+      {% if section.code_render %}
+        <div class="code__rendered">
+          {{ section.code|raw }}
+        </div>
+      {% endif %}
       <div class="code__code">
         <pre class="language-{{ section.code_language }}"><code class="language-{{ section.code_language }}">{{ section.code }}</code></pre>
       </div>
