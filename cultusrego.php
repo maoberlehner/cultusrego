@@ -227,14 +227,14 @@ class cultusrego {
           $value = $this->parse_element_value($element_label, $match);
           $colorset_elements = explode("\n", $value);
           foreach ($colorset_elements as $colorset) {
-            $color_elements = explode(' ', $colorset);
+            $color_elements = explode('|', $colorset);
             $colors = array();
             foreach ($color_elements as $color) {
-              $color_arr = explode('|', $color);
+              $color_arr = explode(':', $color);
               if (count($color_arr) > 1) {
                 $colors[] = array(
-                  'name' => $color_arr[0],
-                  'value' => $color_arr[1],
+                  'name' => trim($color_arr[0]),
+                  'value' => trim($color_arr[1]),
                 );
               }
               else {
@@ -248,13 +248,7 @@ class cultusrego {
 
         case 'variable':
           $variables = $this->parse_element_value($element_label, $match);
-          $variables = str_replace(
-            array('" ', '\' '),
-            array('"#cultusregovariableDIVIDER#', '\'#cultusregovariableDIVIDER#'),
-            $variables
-          );
-          $variables = explode('#cultusregovariableDIVIDER#', $variables);
-          $variables = str_replace('|', ': ', $variables);
+          $variables = explode('|', $variables);
           $element_values['variable'] = '- ' . implode(";\n- ", $variables) . ';';
           break;
 

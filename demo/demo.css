@@ -38,8 +38,8 @@
  *   Color preview
  *
  * @color
- *   Color A|green Color B|blue
- *   White|#fff Black|#222
+ *   Color A: green|Color B: blue
+ *   White: #fff|Black: #222
  */
 
 
@@ -51,7 +51,7 @@
  *   Variable listings
  *
  * @variable
- *   $variable-name-a|"variable value a" $variable-name-b|"variable value b"
+ *   $variable-name-a: "variable value a"|$variable-name-b: "variable value b"|$variable-name-c: 1em
  */
 
 
