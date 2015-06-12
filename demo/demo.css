@@ -1,70 +1,77 @@
 /**
- * @name Demo
+ * Demo
+ *
+ * cultusrego Styleguide demo
+ *
+ * multiline description
+ * with **[markdown](http://daringfireball.net/projects/markdown/)**
+ *
  * @level 1.
- * @description
- *   cultusrego Styleguide demo
  */
 
 
 
 /**
- * @name Code
+ * Code
+ *
+ * Code preview with prism.js
+ * 
  * @level 2.
- * @description
- *   Code preview with prism.js
  */
 /**
- * @name Markup (default)
+ * Markup (default)
+ * 
  * @level X.X
  * @markup
- *   <h4>Lorem ipsum</h4>
- *   <p>Lorem ipsum dolor</p>
+ * <h4>Lorem ipsum</h4>
+ * <p>Lorem ipsum dolor</p>
+ * <ul>
+ *   <li>Liste item 1</li>
+ *   <li>Liste item 2</li>
+ * </ul>
  */
 /**
- * @name CSS
+ * CSS
+ * 
  * @level X.X
  * @code [css]
- *   .foo {
- *     background: green;
- *   }
+ * .foo {
+ *   background: green;
+ * }
  */
 
 
 
 /**
- * @name Color
+ * Color
+ *
+ * Color preview
+ * 
  * @level 3.
- * @description
- *   Color preview
- *
  * @color
- *   Color A: green|Color B: blue
- *   White: #fff|Black: #222
+ * Color A: green|Color B: blue
+ * White: #fff|Black: #222
  */
 
 
 
 /**
- * @name Variable
+ * Variable
+ *
+ * Variable listings
+ * 
  * @level 4.
- * @description
- *   Variable listings
- *
  * @variable
- *   $variable-name-a: "variable value a"|$variable-name-b: "variable value b"|$variable-name-c: 1em
+ * $variable-name-a: "variable value a"|$variable-name-b: "variable value b"|$variable-name-c: 1em
  */
 
 
 
 /**
- * @name Font
- * @level 5.
- * @description
- *   Font examples
+ * Font
  *
- * @font ['Comic Sans MS', sans-serif]
- *   ABCDEFGHIJKLMNOPQRSTUVWXYZ  
- *   abcdefghijklmnopqrstuvwxyz  
- *   0123456789  
- *   !&/()$=@;:,.
+ * Font examples
+ *
+ * @level 5.
+ * @font 'Comic Sans MS', sans-serif
  */
