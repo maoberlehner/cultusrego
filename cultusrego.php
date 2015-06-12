@@ -2,6 +2,7 @@
 
 use Aptoma\Twig\Extension\MarkdownExtension;
 use Aptoma\Twig\Extension\MarkdownEngine;
+use gossi\docblock\Docblock;
 
 class cultusrego {
   public $source;
@@ -20,16 +21,6 @@ class cultusrego {
 
   private $code = '';
   private $sections = array();
-  private $elements = array(
-    'name',
-    'level',
-    'description',
-    'code',
-    'markup',
-    'color',
-    'variable',
-    'font',
-  );
 
   function __construct() {
     $this->twig_cache = $this->template_folder . '/twig_cache';
@@ -91,7 +82,7 @@ class cultusrego {
       $section = array();
       $elements = $this->parse_match($match);
 
-      if (isset($elements['name']) && isset($elements['level'])) {
+      if (isset($elements['title']) && isset($elements['level'])) {
         // Default htag to the lowest level htag
         $elements['htag'] = 'h6';
 
@@ -125,7 +116,7 @@ class cultusrego {
         $sections[$elements['level']] = $elements;
         $last_section = $elements['level'];
       }
-      // If no name or level is provided scan for other styleguide elements
+      // If no title or level is provided scan for other styleguide elements
       // and append them to the previous section
       else if (!empty($elements)) {
         foreach ($elements as $element_label => $element_value) {
@@ -197,35 +188,43 @@ class cultusrego {
    */
   private function parse_match($match) {
     $match = trim($match);
+    $docblock = new Docblock($match);
+    $tags = $docblock->getTags();
     $element_values = array();
 
-    foreach ($this->elements as $element_label) {
-      // If no styleguide element placeholders are found skip parsing the section
-      if (strpos($match, '@' . $element_label) === FALSE) { continue; }
+    if ($title = $docblock->getShortDescription()) {
+      $element_values['title'] = $title;
+    }
 
-      switch ($element_label) {
+    if ($description = $docblock->getLongDescription()) {
+      $element_values['description'] = $description;
+    }
+
+    foreach ($tags as $tag) {
+      $tag_name = $tag->getTagName();
+      $tag_description = $tag->getDescription();
+      switch ($tag_name) {
         case 'code':
         case 'markup':
           // Default code language is markup
           $element_values['code_language'] = 'markup';
           // Hide rendered output by default
           $element_values['code_render'] = FALSE;
-          // If element label is markup render by default
-          if ($element_label == 'markup') {
+          // If tag name is markup render by default
+          if ($tag_name == 'markup') {
             $element_values['code_render'] = TRUE;
           }
           // Look if a other code language is defined
-          if (preg_match("#\@code \[(.*?)\]\n#s", $match, $code_language_match)) {
+          if (preg_match("#^\[(.*?)\]\n#s", $tag_description, $code_language_match)) {
             $element_values['code_language'] = $code_language_match[1];
-            $match = str_replace(' [' . $code_language_match[1] . ']', '', $match);
+            $tag_description = str_replace('[' . $code_language_match[1] . ']', '', $tag_description);
           }
-          $element_values['code'] = $this->parse_element_value($element_label, $match);
+          $element_values['code'] = trim($tag_description);
           break;
 
         case 'color':
           $colorsets = array();
-          $value = $this->parse_element_value($element_label, $match);
-          $colorset_elements = explode("\n", $value);
+          $colorset_elements = explode("\n", $tag_description);
           foreach ($colorset_elements as $colorset) {
             $color_elements = explode('|', $colorset);
             $colors = array();
@@ -247,40 +246,16 @@ class cultusrego {
           break;
 
         case 'variable':
-          $variables = $this->parse_element_value($element_label, $match);
-          $variables = explode('|', $variables);
+          $variables = explode('|', $tag_description);
           $element_values['variable'] = '- ' . implode(";\n- ", $variables) . ';';
           break;
 
-        case 'font':
-          $element_values['font_family'] = '';
-          if (preg_match("#\@font \[(.*?)\]\n#s", $match, $font_family_match)) {
-            $element_values['font_family'] = $font_family_match[1];
-            $match = str_replace(' [' . $font_family_match[1] . ']', '', $match);
-          }
-          $element_values['font'] = $this->parse_element_value($element_label, $match);
-          break;
-
         default:
-          $element_values[$element_label] = $this->parse_element_value($element_label, $match);
+          $element_values[$tag_name] = $tag_description;
           break;
       }
     }
     return $element_values;
-  }
-
-  private function parse_element_value($element_label, $match) {
-    // Single line value inline with the label
-    // (e.g. @label value)
-    if (preg_match_all("#\@$element_label (.*?)(\n|$)#s", $match, $detail_match)) {
-      $element_value = implode("\n\n", $detail_match[1]);
-      return $element_value;
-    }
-
-    // Multi line value
-    preg_match_all("#\@$element_label\n( +)(\*   )?(.*?)(\n +\*\n|$)#s", $match, $detail_match);
-    $element_value = implode("\n\n", preg_replace('#^' . $detail_match[1][0] . '(\*   )?#m', '', $detail_match[3]));
-    return $element_value;
   }
 
   private function load_code($source) {
