@@ -10,7 +10,6 @@ class cultusrego {
   public $description = 'PHP Styleguide Generator';
   public $template_folder = __DIR__ . '/template';
   public $twig_cache;
-  public $base_path;
   public $section_htags = array(
     1 => 'h2',
     2 => 'h3',
@@ -24,8 +23,6 @@ class cultusrego {
 
   function __construct() {
     $this->twig_cache = $this->template_folder . '/twig_cache';
-    // The base path is used for loading frontend assets
-    $this->base_path = substr(str_replace('\\', '/', realpath(dirname(__FILE__))), strlen(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])))) . '/';
 
     // Override the default variables with the values
     // that are provided when the class is initialized
@@ -63,7 +60,6 @@ class cultusrego {
       'description' => $this->description,
       'source' => $this->source,
       'sections' => $this->sections,
-      'base_path' => $this->base_path,
     ));
   }
 
