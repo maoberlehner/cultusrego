@@ -5,7 +5,7 @@ if (is_file('../vendor/autoload.php')) {
 }
 
 $styleguide = new cultusrego(array(
-  'source' => 'demo.css',
+  'source' => 'test.css',
   'template_folder' => 'vendor/cultusrego_theme_default/template',
   'twig_cache' => FALSE,
 ));
