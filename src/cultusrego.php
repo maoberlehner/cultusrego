@@ -189,6 +189,12 @@ class cultusrego {
     $element_values = array();
 
     if ($title = $docblock->getShortDescription()) {
+      // Skip text strings that start with #
+      // (e.g. source map comment)
+      if (strpos($title, '#') === 0) {
+        return $element_values;
+      }
+      
       $element_values['title'] = $title;
     }
 
