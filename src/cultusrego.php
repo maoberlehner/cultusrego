@@ -9,6 +9,7 @@ class cultusrego {
   public $title = 'cultusrego Styleguide';
   public $description = 'PHP Styleguide Generator';
   public $template_folder = __DIR__ . '/template';
+  public $base_path = '';
   public $twig_cache;
   public $section_htags = array(
     1 => 'h2',
@@ -60,6 +61,7 @@ class cultusrego {
       'description' => $this->description,
       'source' => $this->source,
       'sections' => $this->sections,
+      'base_path' => $this->base_path,
     ));
   }
 
