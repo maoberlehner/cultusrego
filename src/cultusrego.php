@@ -206,7 +206,7 @@ class cultusrego {
 
     foreach ($tags as $tag) {
       $tag_name = $tag->getTagName();
-      $tag_description = $tag->getDescription();
+      $tag_description = $this->clean_description($tag->getDescription());
       switch ($tag_name) {
         case 'code':
         case 'markup':
@@ -260,6 +260,10 @@ class cultusrego {
       }
     }
     return $element_values;
+  }
+
+  private function clean_description($description) {
+    return str_replace('\@', '@', $description);
   }
 
   private function load_code($source) {
