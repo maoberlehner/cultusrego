@@ -1,5 +1,4 @@
 .DS_Store
 .sass-cache
-/vendor
-avalanche
-templates/twig_cache
+vendor
+theme

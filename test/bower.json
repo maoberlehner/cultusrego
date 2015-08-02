@@ -1,0 +1,8 @@
+{
+  "name": "cultusrego_test",
+  "version": "1.0.0",
+  "license": "GPL v2",
+  "dependencies": {
+    "cultusrego_theme_default": "^1.0.0"
+  }
+}

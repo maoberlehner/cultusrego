@@ -1,0 +1,77 @@
+/**
+ * Demo
+ *
+ * cultusrego Styleguide demo
+ *
+ * multiline description<br>
+ * with **[markdown](http://daringfireball.net/projects/markdown/)**
+ *
+ * @level 1.
+ */
+
+
+
+/**
+ * Code
+ *
+ * Code preview with prism.js
+ * 
+ * @level 2.
+ */
+/**
+ * Markup (default)
+ * 
+ * @level X.X
+ * @markup
+ * <h4>Lorem ipsum</h4>
+ * <p>Lorem ipsum dolor</p>
+ * <ul>
+ *   <li>Liste item 1</li>
+ *   <li>Liste item 2</li>
+ * </ul>
+ */
+/**
+ * CSS
+ * 
+ * @level X.X
+ * @code [css]
+ * .foo {
+ *   background: green;
+ * }
+ */
+
+
+
+/**
+ * Color
+ *
+ * Color preview
+ * 
+ * @level 3.
+ * @color
+ * Color A: green|Color B: blue
+ * White: #fff|Black: #222
+ */
+
+
+
+/**
+ * Variable
+ *
+ * Variable listings
+ * 
+ * @level 4.
+ * @variable
+ * $variable-name-a: "variable value a"|$variable-name-b: "variable value b"|$variable-name-c: 1em
+ */
+
+
+
+/**
+ * Font
+ *
+ * Font examples
+ *
+ * @level 5.
+ * @font 'Comic Sans MS', sans-serif
+ */
